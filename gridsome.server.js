@@ -1,10 +1,3 @@
-// Server API makes it possible to hook into various parts of Gridsome
-// on server-side and add custom data to the GraphQL data layer.
-// Learn more: https://gridsome.org/docs/server-api
-
-// Changes here require a server restart.
-// To restart press CTRL + C in terminal and run `gridsome develop`
-
 // 'title',
 // 'link',
 // 'pubDate',
@@ -16,29 +9,46 @@
 // 'isoDate',
 // 'itunes'
 
-let Parser = require('rss-parser');
-let parser = new Parser();
+const fs = require('fs');
+const Parser = require('rss-parser');
+const axios = require('axios');
+const cheerio = require('cheerio');
+const xmlString = fs.readFileSync('./recdiffs.xml', 'utf8')
+const parser = new Parser();
 
 module.exports = function (api) {
   api.loadSource(async store => {
-    const { items } = await parser.parseURL('https://www.relay.fm/rd/feed');
+    console.log('before overcast call');
+    const { data: html } = await axios.get('https://overcast.fm/itunes1001591287/reconcilable-differences');
+    console.log('after overcast call', html.length);
+    const $ = cheerio.load(html);
 
+    // console.log('before relay call');
+    // const { items } = await parser.parseURL('https://www.relay.fm/rd/feed');
+    // const { data: xml } = await axios.get('https://www.relay.fm/rd/feed');
+    // console.log('after relay call', xml.length);
+    
+    const { items } = await parser.parseString(xmlString);
+    
     const contentType = store.addContentType({
       typeName: 'Shows'
     })
-    
+
     for (const item of items) {
       const showNotes = item.content.toLowerCase();
-
       const spoilerIndex = showNotes.indexOf('spoiler')
       const splitURL = item.link.split('/');
-      const id = splitURL[splitURL.length - 1];
+      const epId = splitURL[splitURL.length - 1];
 
       if (spoilerIndex > -1) {
         const timestamps = showNotes.match(/\d*:?\d+:\d+/gi);
-        
+
+        const ocEpisode = $(`.title.singleline:contains(${epId})`)
+        const overcastId = ocEpisode.closest('a').attr('href')
+
         contentType.addNode({
-          id: id,
+          id: epId,
+          overcastId: overcastId,
           title: item.title,
           link: item.link,
           timestamps: timestamps,
@@ -48,9 +58,5 @@ module.exports = function (api) {
         })
       }
     }
-  })
-
-  // api.createPages(({ createPage }) => {
-  //   // Use the Pages API here: https://gridsome.org/docs/pages-api
-  // })
+  });
 }
