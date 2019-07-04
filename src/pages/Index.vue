@@ -48,7 +48,7 @@ query {
 <script>
 export default {
   metaInfo: {
-    title: 'Spoiler Slots'
+    title: 'Home'
   },
 
   computed: {
