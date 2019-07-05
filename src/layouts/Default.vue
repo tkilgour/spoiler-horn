@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto px-4 sm:px-10 lg:px-40 py-2">
     <header class="header">
-      <h1 class="text-4xl">The Spoiler Horn</h1>
+      <h1 class="mt-2 sm:mt-4 text-4xl">The Spoiler Horn</h1>
     </header>
     <main>
       <slot/>

@@ -15,7 +15,7 @@
       <div class="mt-6">
         <a class="text-blue-700 font-medium outline-none hover:text-blue-800 focus:text-white focus:bg-blue-800" :href="show.node.link">{{ show.node.title }}</a>
       </div>
-      <p class="snippet mt-1" v-html="show.node.snippet" />
+      <div class="snippet mt-1" v-html="show.node.snippet" />
       <div class="flex">
         <a class="mt-8 px-2 py-1 flex justify-center border-2 border-orange-600 bg-white text-orange-700 rounded outline-none hover:bg-orange-600 hover:text-white focus:bg-orange-600 focus:text-white" :href="`https://overcast.fm/${show.node.overcastId}/${show.node.timestamps[0]}`">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="20" class="mr-2 fill-current">
