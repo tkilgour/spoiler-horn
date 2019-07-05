@@ -23,16 +23,23 @@ module.exports = function (api) {
       const spoilerIndex = showNotes.indexOf('spoiler');
       const splitURL = item.link.split('/');
       const epId = splitURL[splitURL.length - 1];
-
-      if (spoilerIndex > -1) {
-        const timestamps = showNotes.match(/\d*:?\d+:\d+/gi);
+      const timestamps = showNotes.match(/\d*:?\d+:\d+/gi);
+      
+      if (spoilerIndex > -1 && timestamps) {
         const saniTitle = item.title.replace('Reconcilable Differences ', '');
-
+        
         const ocEpisode = $(`.title.singleline:contains(${epId})`);
         const ocURL = ocEpisode.closest('a').attr('href');
         const overcastId = ocURL.slice(1, ocURL.length);
-
+        
         const snippet = marked(item.itunes.summary)
+
+        if (!spoilerTopics[epId]) {
+          axios.post('https://maker.ifttt.com/trigger/update_topic/with/key/dcEOCzJHSk5FjIC24MIxmA', {
+            "value1": item.title,
+            "value2": marked(item.content)
+          });
+        }
 
         contentType.addNode({
           id: epId,
@@ -40,7 +47,7 @@ module.exports = function (api) {
           title: saniTitle,
           link: item.link,
           timestamps: timestamps,
-          content: item['content:encoded'],
+          content: item.content,
           date: item.pubDate,
           topic: spoilerTopics[epId],
           snippet
