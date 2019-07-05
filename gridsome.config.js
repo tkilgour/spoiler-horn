@@ -6,5 +6,9 @@
 
 module.exports = {
   siteName: 'The Spoiler Horn',
-  plugins: []
+  plugins: [
+    {
+      use: 'gridsome-plugin-tailwindcss'
+    }
+  ]
 }

@@ -2,6 +2,7 @@ const fs = require('fs');
 const Parser = require('rss-parser');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const marked = require('marked');
 const rawJSON = fs.readFileSync('./spoilerTopics.json');
 const spoilerTopics = JSON.parse(rawJSON);
 const parser = new Parser();
@@ -15,11 +16,11 @@ module.exports = function (api) {
     
     const contentType = store.addContentType({
       typeName: 'Shows'
-    })
+    });
 
     for (const item of items) {
       const showNotes = item.content.toLowerCase();
-      const spoilerIndex = showNotes.indexOf('spoiler')
+      const spoilerIndex = showNotes.indexOf('spoiler');
       const splitURL = item.link.split('/');
       const epId = splitURL[splitURL.length - 1];
 
@@ -27,9 +28,11 @@ module.exports = function (api) {
         const timestamps = showNotes.match(/\d*:?\d+:\d+/gi);
         const saniTitle = item.title.replace('Reconcilable Differences ', '');
 
-        const ocEpisode = $(`.title.singleline:contains(${epId})`)
-        const ocURL = ocEpisode.closest('a').attr('href')
-        const overcastId = ocURL.slice(1, ocURL.length)
+        const ocEpisode = $(`.title.singleline:contains(${epId})`);
+        const ocURL = ocEpisode.closest('a').attr('href');
+        const overcastId = ocURL.slice(1, ocURL.length);
+
+        const snippet = marked(item.itunes.summary)
 
         contentType.addNode({
           id: epId,
@@ -37,10 +40,10 @@ module.exports = function (api) {
           title: saniTitle,
           link: item.link,
           timestamps: timestamps,
-          content: item.content,
+          content: item['content:encoded'],
           date: item.pubDate,
           topic: spoilerTopics[epId],
-          itunes: item.itunes
+          snippet
         })
       }
     }
