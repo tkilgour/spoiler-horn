@@ -53,10 +53,12 @@ query {
 export default {
   metaInfo: {
     title: 'Shows',
-    meta: {
-      name: 'description',
-      content: 'A complete list of all Reconcillable Difference Spoiler Slots.'
-    }
+    meta: [
+      {
+        name: 'description',
+        content: 'A complete list of all topics covered in the Reconcillable Difference podcast Spoiler Slots.'
+      }
+    ]
   },
 
   computed: {
