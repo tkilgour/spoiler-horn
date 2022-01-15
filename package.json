@@ -10,7 +10,7 @@
     "axios": "^0.19.0",
     "cheerio": "^1.0.0-rc.3",
     "gridsome": "^0.6.0",
-    "marked": "^0.6.3",
+    "marked": "^4.0.10",
     "rss-parser": "^3.7.1"
   },
   "devDependencies": {
